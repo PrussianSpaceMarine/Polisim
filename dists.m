@@ -1,18 +1,43 @@
-p = makedist('Normal','mu',-1.5,'sigma',1);
-pop = -0.5;
+function result = dists(pop,cand,vis)
+% Calculates pop's support for a candidate based on their skew relative to
+% the candidate's position, and optionally visualizes it.
+
+arguments
+    pop (1,1) double
+    cand (1,1) double
+    vis (1,1) double = false
+end
+
+% Population opinion distribution
+p = makedist('Normal','mu',pop,'sigma',1);
 x = -4:.01:4;
-pc = cdf(p,x);
 pd = pdf(p,x);
-diff = -0.3.*((x-pop).^2)+1;
+
+% Distance from candidate factor
+diff = -0.3.*((x-cand).^2)+1;
+
+% For integration, only take positive values
+valid = diff >= 0;
+
+% Multiply distance factor by pop stance distribution element-wise
 weight = pd.*diff;
-plot(x,pd,"b-","LineWidth",3)
-hold on
-plot(x,diff,"g--","LineWidth",2.5)
-plot(x,weight,"r-","LineWidth",2.5)
-xline(0,"LineWidth",2)
-legend("Pop Distribution on Issue","Distance to Candidate Position","Support","0")
-support = sum(weight(weight >= 0));
-ylim([0,1])
-xlabel("Issue Position")
-% grid on
-hold off
+
+% Optionally, visualize results
+if vis == true
+    plot(x,pd,"b-","LineWidth",3)
+    hold on
+    plot(x,diff,"g--","LineWidth",2.5)
+    plot(x,weight,"r-","LineWidth",2.5)
+    xline(0,"LineWidth",2)
+    legend("Pop Distribution on Issue","Distance to Candidate Position","Support","0")
+    
+    ylim([0,1])
+    xlabel("Issue Position")
+    % grid on
+    hold off
+end
+
+% Result is the integration of weight, where weight is positive
+result = trapz(x(valid),weight(valid));
+
+end
