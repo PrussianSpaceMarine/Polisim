@@ -27,8 +27,10 @@ pop = readtable(drive + dataset + "/pop.csv","ReadVariableNames",true);
 % Pops demographic assignment
 pop_dem = readtable(drive + dataset + "/pop_dem.csv","ReadVariableNames",true);
 
-% Placeholder candidates
+% Placeholder candidates and their positions
 can = readtable(drive + dataset + "/can.csv","ReadVariableNames",true);
+can_iss = readtable(drive + dataset + "/can_iss.csv","ReadVariableNames",true);
 
-% The issue table for pops to form opinions
-issueTable = outerjoin(dem_iss,pop_dem,"Keys","dID","MergeKeys",true);
+% The issue tables for opinions
+popIssueTable = outerjoin(dem_iss,pop_dem,"Keys","dID","MergeKeys",true);
+canIssueTable = outerjoin(outerjoin(can_iss,can,"Keys","cID","MergeKeys",true),iss,"Keys","iID","MergeKeys",true);

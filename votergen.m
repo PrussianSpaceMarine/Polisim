@@ -1,6 +1,9 @@
 function output = votergen(pollLoc,genCount,issues,existingGen)
 % Generate v voters in a given precinct with a stance across i issue dimensions
 
+% This function is out of date and must be replaced to be compatible with
+% design changes.
+
 arguments
     pollLoc (1,1) double
     genCount (1,1)
