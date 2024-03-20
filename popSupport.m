@@ -1,4 +1,4 @@
-function result = popSupport(popissuematrix,canissuematrix,pops,candidates,rankDepth)
+function [result1,result2,result3] = popSupport(popissuematrix,canissuematrix,pops,candidates,rankDepth)
 
 arguments
     popissuematrix (:,:)
@@ -26,8 +26,6 @@ for p = 1:popCount
     popPos = zeros(issueCount,1);
     issDiv = zeros(issueCount,1); demDiv = zeros(issueCount,1);
 
-    depth = 1;
-
     %% For every issue, define bias and importance
     for i = 1:issueCount
         
@@ -44,13 +42,13 @@ for p = 1:popCount
     
 
     %% For every candidate, calculate overall pop support
-    for c = 1:canCount
-        supportTemp = 0;
+    for i = 1:issueCount
 
-        % Pull the candidate's positions from the can issue table
-        canOpinions = lookupTable(canissuematrix,"cID",candidates(c));
+        merge = table(0,'VariableNames',"x");
+        for c = 1:canCount
 
-        for i = 1:issueCount
+            % Pull the candidate's positions from the can issue table
+            canOpinions = lookupTable(canissuematrix,"cID",candidates(c));
             
             % Candidate's position on this issue
             issPos = canOpinions{canOpinions.iID == i,"position"};
@@ -60,18 +58,26 @@ for p = 1:popCount
             
             % Calculate base support, divide by how much they care, and
             % add to running total for candidate support
-            [s,~] = dists(popPos(i),issPos);
-            supportTemp = supportTemp + s / mean([demDiv(i) issDiv(i)]);
+            [t1,t2] = dists(popPos(i),issPos,0,0);
+            tt = table(t1',t2','VariableNames',["x",string(c)]);
+            merge = outerjoin(merge,tt,"Keys","x","MergeKeys",true);
+            % supportTemp = supportTemp + t1 / mean([demDiv(i) issDiv(i)]);
             
         end
+        v = merge{:,2:end};
+        x{p,i} = merge{:,1};
+
+        [support{p,i},rank{p,i}] = sort(v,2,"descend","MissingPlacement","last");
 
         % Write to final matrix
-        baseSupport(p,c) = supportTemp;
+        % baseSupport(p,c) = supportTemp;
 
     end
 
 end
 
-result = baseSupport;
+result1 = support;
+result2 = rank;
+result3 = x;
 
 end

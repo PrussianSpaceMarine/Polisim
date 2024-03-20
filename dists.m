@@ -11,7 +11,7 @@ end
 
 % Population opinion distribution
 p = makedist('Normal','mu',pop,'sigma',1);
-x = -4:.01:4;
+x = -4:0.1:4;
 pd = pdf(p,x);
 
 % Distance from candidate factor
