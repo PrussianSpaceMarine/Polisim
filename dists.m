@@ -1,11 +1,12 @@
-function result = dists(pop,cand,vis)
+function [result1,result2] = dists(pop,cand,vis,integrate)
 % Calculates pop's support for a candidate based on their skew relative to
 % the candidate's position, and optionally visualizes it.
 
-arguments
+arguments (Input)
     pop (1,1) double
     cand (1,1) double
     vis (1,1) double = false
+    integrate (1,1) double = true
 end
 
 % Population opinion distribution
@@ -38,6 +39,12 @@ if vis == true
 end
 
 % Result is the integration of weight, where weight is positive
-result = trapz(x(valid),weight(valid));
+if integrate == true
+    result1 = trapz(x(valid),weight(valid));
+    result2 = NaN;
+else
+    result1 = x(valid);
+    result2 = weight(valid);
+end
 
 end

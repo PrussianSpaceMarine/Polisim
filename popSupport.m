@@ -1,10 +1,11 @@
-function result = popSupport(popissuematrix,canissuematrix,pops,candidates)
+function result = popSupport(popissuematrix,canissuematrix,pops,candidates,rankDepth)
 
 arguments
     popissuematrix (:,:)
     canissuematrix (:,:)
     pops (:,1) double
     candidates (:,1) double
+    rankDepth (1,1) double = 1
 end
 
 % All issues, and the count
@@ -14,7 +15,7 @@ issueCount = length(issues);
 % Number of pops and candidates, respectively
 popCount = length(pops); canCount = length(candidates);
 
-baseSupport = zeros(popCount,canCount);
+baseSupport = zeros(popCount,canCount,rankDepth);
 
 for p = 1:popCount
 
@@ -24,6 +25,8 @@ for p = 1:popCount
     % Initialize pop bias and importance tables
     popPos = zeros(issueCount,1);
     issDiv = zeros(issueCount,1); demDiv = zeros(issueCount,1);
+
+    depth = 1;
 
     %% For every issue, define bias and importance
     for i = 1:issueCount
@@ -57,7 +60,8 @@ for p = 1:popCount
             
             % Calculate base support, divide by how much they care, and
             % add to running total for candidate support
-            supportTemp = supportTemp + dists(popPos(i),issPos) / mean([demDiv(i) issDiv(i)]);
+            [s,~] = dists(popPos(i),issPos);
+            supportTemp = supportTemp + s / mean([demDiv(i) issDiv(i)]);
             
         end
 
