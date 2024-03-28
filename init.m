@@ -32,5 +32,6 @@ can = readtable(drive + dataset + "/can.csv","ReadVariableNames",true);
 can_iss = readtable(drive + dataset + "/can_iss.csv","ReadVariableNames",true);
 
 % The issue tables for opinions
+global pIT cIT
 pIT = outerjoin(outerjoin(dem_iss,pop_dem,"Keys","dID","MergeKeys",true),pop,"Keys","pop","MergeKeys",true);
 cIT = outerjoin(outerjoin(can_iss,can,"Keys","cID","MergeKeys",true),iss,"Keys","iID","MergeKeys",true);

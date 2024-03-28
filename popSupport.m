@@ -1,15 +1,16 @@
-function [result1,result2,result3] = popSupport(popissuematrix,canissuematrix,pops,candidates,rankDepth)
+function [result1,result2,result3] = popSupport(pops,candidates,rankDepth)
 
 arguments
-    popissuematrix (:,:)
-    canissuematrix (:,:)
     pops (:,1) double
     candidates (:,1) double
     rankDepth (1,1) double = 1
 end
 
+% Globals
+global pIT cIT
+
 % All issues, and the count
-issues = unique(popissuematrix.iID);
+issues = unique(pIT{:,"iID"});
 issueCount = length(issues);
 
 % Number of pops and candidates, respectively
@@ -20,7 +21,7 @@ baseSupport = zeros(popCount,canCount,rankDepth);
 for p = 1:popCount
 
     % Pull this pop's biases from the issue table
-    opinions = lookupTable(popissuematrix,"pop",pops(p));
+    opinions = lookupTable(pIT,"pop",pops(p));
     
     % Initialize pop bias and importance tables
     popPos = zeros(issueCount,1);
@@ -48,7 +49,7 @@ for p = 1:popCount
         for c = 1:canCount
 
             % Pull the candidate's positions from the can issue table
-            canOpinions = lookupTable(canissuematrix,"cID",candidates(c));
+            canOpinions = lookupTable(cIT,"cID",candidates(c));
             
             % Candidate's position on this issue
             issPos = canOpinions{canOpinions.iID == i,"position"};
