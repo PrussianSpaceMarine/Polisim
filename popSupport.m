@@ -1,9 +1,8 @@
-function [result1,result2,result3] = popSupport(pops,candidates,rankDepth)
+function [result1,result2,result3] = popSupport(pops,candidates)
 
 arguments
     pops (:,1) double
     candidates (:,1) double
-    rankDepth (1,1) double = 1
 end
 
 % Globals
@@ -15,8 +14,6 @@ issueCount = length(issues);
 
 % Number of pops and candidates, respectively
 popCount = length(pops); canCount = length(candidates);
-
-baseSupport = zeros(popCount,canCount,rankDepth);
 
 for p = 1:popCount
 
@@ -56,9 +53,9 @@ for p = 1:popCount
             if isempty(issPos)
                 issPos = 0; % If they have no listed position, assume 0
             end
-            
-            % Calculate base support, divide by how much they care, and
-            % add to running total for candidate support
+
+            % Calculate support weight across all different issues, merge
+            % data together into a processable cell array.
             [t1,t2] = dists(popPos(i),issPos,0,0);
             tt = table(t1',t2','VariableNames',["x",string(c)]);
             merge = outerjoin(merge,tt,"Keys","x","MergeKeys",true);
@@ -70,12 +67,12 @@ for p = 1:popCount
 
         [support{p,i},rank{p,i}] = sort(v,2,"descend","MissingPlacement","last");
 
-        % Write to final matrix
-        % baseSupport(p,c) = supportTemp;
-
     end
 
 end
+
+%% Combine Issues
+% This is sadly necessary to 
 
 result1 = support;
 result2 = rank;
